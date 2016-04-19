@@ -1,0 +1,16 @@
+#! /bin/bash
+#$ -cwd
+#$ -S /bin/bash
+#$ -V
+#$ -t 1-175
+#$ -q all.q
+#$ -pe mpi_smp 32 
+#$ -e /home/ubuntu/error
+#$ -o /home/ubuntu/out
+source /etc/bash.bashrc
+echo "Start - TASKID " $SGE_TASK_ID " : " $(date)
+# Run anatomical spatial qap
+subid=$(( ${SGE_TASK_ID} - 1 ))
+/abide_data/cp_train.sh
+seq 1 200 | /abide_data/parallel -j 32 "time /abide_data/predict.sh ${subid} {} > /abide_data/logs/${SGE_TASK_ID}_{#}.log 2>&1"
+echo "End - TASKID " $SGE_TASK_ID " : " $(date)
