@@ -6,12 +6,13 @@ library(reshape2)
 library(foreach)
 library(doMC)
 
-registerDoMC(4)
+registerDoMC(1)
  
 pred.mylme = rep.mylme = list()
 pred.pvalue = rep.pvalue = list()
 pred.coeff = rep.coeff = list()
 foreach (roi=1:200) %dopar% {
+    print(sprintf("processing %d",roi))
     pred = read.csv(sprintf('result_dframes/%d_pred_df.csv',roi))
     pred.mylme[[roi]] = lmer(r_std ~ diag_dir + train_age +
         del_age + train_motion + test_motion + (1|test) +(1|train), data=pred)
